@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'crispy_forms',
-    'reportlab',
 
     'attendance.apps.AttendanceConfig',
     'account.apps.AccountConfig',

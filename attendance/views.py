@@ -2,16 +2,12 @@ import datetime
 from django.shortcuts import render
 from account.models import MyUser
 from attendance.models import AttendanceBook, Class, Period, Place
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.views import View
 from xhtml2pdf import pisa
-
-
-sched = BackgroundScheduler()
 
 
 def register(request):
@@ -252,18 +248,3 @@ class ViewPDF(View):
 
         pdf = render_to_pdf('attendance/book_search.html', {})
         return HttpResponse(pdf, content='application/pdf')
-
-
-@sched.scheduled_job('cron', hour='0', minute='0', second='1', id='gen_atdc_book')
-def gen_atdc_book():
-    student_user = MyUser.objects.filter(is_student=1)
-    period_qs = Period.objects.all()
-    place = Place.objects.get(place='교실')
-    for user in student_user:
-        for period in period_qs:
-            book = AttendanceBook(user=user, date=datetime.datetime.today(), period=period, place=place)
-            book.save()
-    return True
-
-
-sched.start()
