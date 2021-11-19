@@ -1,0 +1,71 @@
+<!--templates/attendance/book_register.html-->
+{% extends 'base.html' %}
+{% block content %}
+<div class="badge bg-success text-wrap" style="width: 15rem;">{{today}} &nbsp &nbsp {{user.user_code}} {{user.name}}</div> <br><br>
+
+<form action="{% url 'book_register_save' %}" method="POST">
+  {% csrf_token %}
+  <div class="container">
+
+      <div class="row g-2 align-items-center">
+
+          <div class="col-auto">
+            <label for="period" class="col-form-label">교시:</label>
+          </div>
+
+          <div class="col-auto">
+              <select class="form-select-padding-x-sm" id="period" name="period">
+                {% for el in period_qs %}
+                  <option value="{{el.pk}}" {% if el.pk == current_period %} selected {% endif %}>{{el.period}}</option>
+                {% endfor %}
+              </select>
+          </div>
+
+          <div class="col-auto">
+            <label for="place" class="col-form-label"> 학습장소:</label>
+          </div>
+
+          <div class="col-auto">
+              <select class="form-select-padding-x-sm" id="place" name="place">
+                {% for el in place_qs %}
+                  <option value="{{el.pk}}" {% if el.pk == current_place %} selected {% endif %}>{{el.place}}</option>
+                {% endfor %}
+              </select>
+          </div>
+
+          <div class="col-auto">
+            &nbsp <button type="submit" class="btn btn-primary btn-sm">신청</button>
+          </div>
+
+      </div>
+
+  </div>
+
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-success">
+      <tr align='center'>
+        <th scope="col">교시</th>
+        <th scope="col">장소</th>
+        <th scope="col">확인</th>
+      </tr>
+    </thead>
+    <tbody>
+     {% for el in attendance_qs %}
+      <tr>
+          <td align='center'>{{ el.period.period }}</td>
+          <td align='center'>{{ el.place.place }}</td>
+          {% if el.check == True %}
+          <td align='center'><font color="blue"><b>&check;</b></font></td>
+          {% else %}
+          <td align='center'></td>
+          {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

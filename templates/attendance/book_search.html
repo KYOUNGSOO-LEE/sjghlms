@@ -1,0 +1,134 @@
+<!--templates/attendance/book_search.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+<script type="text/javascript">
+          $(function() {
+              $('#datepicker').datepicker();
+          });
+</script>
+
+<div class="badge bg-success text-wrap" style="width: 8rem;">출석부 조회</div>
+<div class="badge bg-success text-wrap" style="width: 11rem;">Today {{today}}</div> <br> <br>
+
+<form action="{% url 'book_search' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="container">
+
+    <div class="row g-2 align-items-center">
+
+      <div class="col-auto">
+        <label for="datepicker" class="col-form-label">날짜:</label>
+      </div>
+
+      <div class="col-auto">
+        <div class="input-group date" id="datepicker" name="datepicker">
+          <input type="text" class="form-control" size="8" value="{{current_month}}/{{current_day}}/{{current_year}}" id="date" name="date">
+          <span class="input-group-append">
+              <span class="input-group-text bg-white d-block">
+                  <i class="fa fa-calendar"></i>
+              </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <label for="grade" class="col-form-label">학년:</label>
+      </div>
+
+      <div class="col-auto">
+        <select class="form-control" id="grade" name="grade">
+          <option value="1" {% if current_grade == 1 %} selected {% endif %}>1</option>
+          <option value="2" {% if current_grade == 2 %} selected {% endif %}>2</option>
+          <option value="3" {% if current_grade == 3 %} selected {% endif %}>3</option>
+        </select>
+      </div>
+
+      <div class="col-auto">
+          <label for="cls" class="col-form-label">반:</label>
+      </div>
+
+      <div class="col-auto">
+        <select class="form-control" id="cls" name="cls">
+          {% for el in cls_qs %}
+            <option value="{{el.pk}}" {% if el.pk == current_cls %} selected {% endif %}>{{el.cls}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">조회 </button>
+      </div>
+
+    </div>
+  </div>
+
+</form>
+<br>
+<form action="{% url 'book_search_pdf' %}" method="POST">
+  {% csrf_token %}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-danger">
+        <tr align='center'>
+          <th scope="col">학번</th>
+          <th scope="col">이름</th>
+          {% for el in period_qs %}
+            <th scope="col">{{el.period}}</th>
+            <th scope="col">확인</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for el in attendance_qs %}
+            {% if el.period.period == 7 %}
+              <td align='center'>{{ el.user.user_code }}</td>
+              <td align='center'>{{ el.user.name }}</td>
+              <td align='center'>{{ el.place.place }}</td>
+              {% if el.check == True %}
+                <td align='center'><font color="blue"><b>&check;</b></font></td>
+              {% elif el.check == False %}
+                <td align='center'><font color="red"><b>&cross;</b></font></td>
+              {% endif %}
+            {% elif el.period.period == 8 %}
+              <td align='center'>{{ el.place.place }}</td>
+              {% if el.check == True %}
+                <td align='center'><font color="blue"><b>&check;</b></font></td>
+              {% elif el.check == False %}
+                <td align='center'><font color="red"><b>&cross;</b></font></td>
+              {% endif %}
+            {% elif el.period.period == 9 %}
+              <td align='center'>{{ el.place.place }}</td>
+              {% if el.check == True %}
+                <td align='center'><font color="blue"><b>&check;</b></font></td>
+              {% elif el.check == False %}
+                <td align='center'><font color="red"><b>&cross;</b></font></td>
+              {% endif %}
+            {% elif el.period.period == 10 %}
+              <td align='center'>{{ el.place.place }}</td>
+              {% if el.check == True %}
+                <td align='center'><font color="blue"><b>&check;</b></font></td>
+              {% elif el.check == False %}
+                <td align='center'><font color="red"><b>&cross;</b></font></td>
+              {% endif %}
+            {% elif el.period.period == 11 %}
+              <td align='center'>{{ el.place.place }}</td>
+              {% if el.check == True %}
+                <td align='center'><font color="blue"><b>&check;</b></font></td>
+              {% elif el.check == False %}
+                <td align='center'><font color="red"><b>&cross;</b></font></td>
+              {% endif %}
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    <input type="hidden" name="grade" value="{{ current_grade }}">
+    <input type="hidden" name="cls" value="{{ current_cls }}">
+    <button type="submit" class="btn btn-outline-primary">pdf</button>
+  </div>
+</form>
+
+{% endblock %}
