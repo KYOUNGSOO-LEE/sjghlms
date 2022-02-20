@@ -1,0 +1,94 @@
+<!--templates/attendance/book_register.html-->
+{% extends 'base.html' %}
+{% block content %}
+<div class="badge bg-success text-wrap" style="width: 8rem;">자습출석부</div>
+<div class="badge bg-success text-wrap" style="width: 11rem;">Today {{today}}</div> <br> <br>
+
+<form action="{% url 'book_register_save' %}" method="POST">
+  {% csrf_token %}
+
+    {% if check == 1 %}
+        <div class="alert alert-danger" role="alert">
+            {{current_period}}교시 신청이 마감되었습니다. 감독선생님께 문의하세요.
+        </div>
+    {% elif check == 2 %}
+        <div class="alert alert-danger" role="alert">
+            오늘 출석부가 생성되어 있지 않습니다. 관리자에게 문의하세요.
+        </div>
+    {% endif %}
+
+  <div class="container">
+
+      <div class="row g-2 align-items-center">
+
+          <div class="col-auto">
+            <label for="period" class="col-form-label">교시:</label>
+          </div>
+
+          <div class="col-auto">
+              <select class="form-select-padding-x-sm" id="period" name="period">
+                {% for el in period_qs %}
+                  <option value="{{el.pk}}" {% if el.pk == current_period %} selected {% endif %}>{{el.period}}</option>
+                {% endfor %}
+              </select>
+          </div>
+
+          <div class="col-auto">
+            <label for="place" class="col-form-label"> 학습장소:</label>
+          </div>
+
+          <div class="col-auto">
+              <select class="form-select-padding-x-sm" id="place" name="place">
+                {% for el in place_qs %}
+                  <option value="{{el.pk}}" {% if el.pk == current_place %} selected {% endif %}>{{el.place}}</option>
+                {% endfor %}
+              </select>
+          </div>
+
+          <div class="col-auto">
+            &nbsp <button type="submit" class="btn btn-primary btn-sm">신청</button>
+          </div>
+
+      </div>
+
+  </div>
+
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-success">
+      <tr align='center'>
+        <th scope="col">교시</th>
+        <th scope="col">장소</th>
+        <th scope="col">확인</th>
+      </tr>
+    </thead>
+    <tbody>
+     {% for el in attendance_qs %}
+      <tr>
+          <td align='center'>{{ el.period.period }}</td>
+          <td align='center'>{{ el.place.place }}</td>
+          {% if el.check == True %}
+          <td align='center'><font color="blue"><b>&check;</b></font></td>
+          {% else %}
+          <td align='center'></td>
+          {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<font color="blue"> <b>
+    <h7>&lang; 출석부 사용 안내 &rang;</h7> <br>
+    <h7>&clubs; 아고라1 : 2학년 교무실 옆 아고라</h7> <br>
+    <h7>&clubs; 아고라2 : 3반 앞 아고라</h7> <br>
+    <h7>&clubs; 방과후, 활짝피다 등의 수업은 모두 방과후로 등록</h7> <br>
+    <h7>&clubs; 외박을 하는 경우 해당교시부터 모두 외박을 등록</h7> <br>
+    <h7>&clubs; 모학실, 아고라, 지계 등 인원 제한이 있는 실 사용 시 교무실 앞 칠판의 신청서를 작성한 후 시스템에 등록</h7> <br>
+    <h7>&clubs; 감독선생님이 확인한 후에는 학습장소 변경 불가함</h7> <br>
+    <h7>&clubs; 학습장소가 선택 항목에 없어 기타로 등록할 시 반드시 감독선생님께 구두로 알림</h7> <br>
+</b></font>
+
+{% endblock %}
