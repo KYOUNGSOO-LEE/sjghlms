@@ -7,10 +7,15 @@ from attendance.models import AttendanceBook, Grade, Class, Period, Place, Comme
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        weekday=datetime.today().weekday()
+
         student_user = MyUser.objects.filter(is_student=1)
         grade_qs = Grade.objects.all()
         period_qs = Period.objects.all()
-        place = Place.objects.get(place='교실')
+        if weekday == 6 or weekday == 7:
+            place = Place.objects.get(place='외박')
+        else:
+            place = Place.objects.get(place='교실')
         for user in student_user:
             for period in period_qs:
                 book = AttendanceBook(user=user, date=datetime.today(), period=period, place=place)
