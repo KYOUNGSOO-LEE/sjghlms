@@ -57,7 +57,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=30, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    is_student = models.BooleanField(default=True)
+    is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_coordinator = models.BooleanField(default=False)
 
