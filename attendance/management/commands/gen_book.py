@@ -12,7 +12,7 @@ class Command(BaseCommand):
         student_user = MyUser.objects.filter(is_student=1)
         grade_qs = Grade.objects.all()
         period_qs = Period.objects.all()
-        if weekday == 5 or weekday == 6:
+        if weekday == 6 or weekday == 7:
             place = Place.objects.get(place='외박')
         else:
             place = Place.objects.get(place='교실')
