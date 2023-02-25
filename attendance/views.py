@@ -2,6 +2,7 @@ import datetime
 from django.shortcuts import render
 from attendance.models import AttendanceBook, Grade, Class, Period, Place, Comments
 from django.db.models import Q
+from django.contrib.auth.decorators import user_passes_test
 
 
 def register(request):
@@ -102,7 +103,7 @@ def register_save(request):
 
     return render(request, template, context)
 
-
+@user_passes_test(lambda u: u.is_staff)
 def book(request):
     template = 'attendance/book.html'
 
@@ -196,7 +197,7 @@ def book(request):
     }
     return render(request, template, context)
 
-
+@user_passes_test(lambda u: u.is_staff)
 def book_save(request):
     template = 'attendance/book.html'
 
@@ -340,7 +341,7 @@ def book_save(request):
     }
     return render(request, template, context)
 
-
+@user_passes_test(lambda u: u.is_staff)
 def book_search(request):
     template = 'attendance/book_search.html'
 
@@ -359,6 +360,11 @@ def book_search(request):
     day = datetime.date.today().day
     year = datetime.date.today().year
 
+    if month < 10:
+        month = "0" + str(month)
+    if day < 10:
+        day = "0" + str(day)
+
     if request.method == 'POST':
         if request.POST.get('grade') is not None:
             grade_query = request.POST.get('grade')
@@ -371,9 +377,16 @@ def book_search(request):
 
     if user_code == 77:
         grade_qs = Grade.objects.all()
+    elif user_code > 1000:
+        grade_qs = Grade.objects.filter(grade=(user_code // 1000))
     else:
         grade_qs = Grade.objects.filter(grade=user_code)
-    cls_qs = Class.objects.all()
+
+    if user_code > 1000:
+        cls_qs = Class.objects.filter(cls= ((user_code % 1000) // 100))
+    else:
+        cls_qs = Class.objects.all()
+
     period_qs = Period.objects.filter(period__gte=7).filter(period__lte=11)
     attendance_qs = AttendanceBook.objects.filter(date=datetime.datetime(int(year), int(month), int(day))) \
         .filter(user__user_code__gte=int(grade_query) * 1000 + int(cls_query) * 100) \

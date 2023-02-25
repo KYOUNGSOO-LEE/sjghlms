@@ -38,11 +38,16 @@
                                 <a href="{% url 'book_register' %}" class="nav-link px-0">
                                 <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">자습출석부</span> </a>
                             </li>
-                            {% elif user.is_teacher or user.is_coordinator %}
+                            {% elif user.is_teacher %}
                             <li>
                                 <a href="{% url 'book' %}" class="nav-link px-0">
                                 <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">출석부 관리</span> </a>
                             </li>
+                            <li>
+                                <a href="{% url 'book_search' %}" class="nav-link px-0">
+                                <i class="bi bi-search"></i> <span class="d-none d-sm-inline">출석부 조회</span> </a>
+                            </li>
+                            {% elif user.is_coordinator %}
                             <li>
                                 <a href="{% url 'book_search' %}" class="nav-link px-0">
                                 <i class="bi bi-search"></i> <span class="d-none d-sm-inline">출석부 조회</span> </a>
